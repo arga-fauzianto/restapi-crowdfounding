@@ -1,9 +1,9 @@
 package main
 
 import (
-	"crowdfounding/handler"
-	"crowdfounding/user"
 	"log"
+	"rest-croudfounding/handler"
+	"rest-croudfounding/user"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -20,15 +20,11 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
-
-	userHandler := handler.NewHandler(userService)
+	userHandler := handler.NewUserHandler(userService)
 
 	router := gin.Default()
-
 	api := router.Group("/api/v1")
-
 	api.POST("/users", userHandler.RegisterUser)
-
 	router.Run()
 
 }

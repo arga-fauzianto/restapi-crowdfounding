@@ -8,8 +8,9 @@ type User struct {
 	Ocuppation   string
 	Email        string
 	PasswordHash string
-	AvatarFile   string
 	Role         string
+	Token        string
+	AvatarFile   string
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
