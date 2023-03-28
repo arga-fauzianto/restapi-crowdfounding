@@ -2,8 +2,8 @@ package handler
 
 import (
 	"net/http"
-	"rest-croudfounding/helper"
-	"rest-croudfounding/user"
+	"rest-crowdfounding/helper"
+	"rest-crowdfounding/user"
 
 	"github.com/gin-gonic/gin"
 )
@@ -117,6 +117,49 @@ func (h *userHandler) CheckEmailAvailable(c *gin.Context) {
 	}
 
 	response := helper.APIResponse(metaMessage, http.StatusOK, "success", data)
+	c.JSON(http.StatusOK, response)
+
+}
+
+func (h *userHandler) UploudAvatar(c *gin.Context) {
+
+	file, err := c.FormFile("avatar")
+
+	if err != nil {
+		data := gin.H{"is_uplouded": false}
+		response := helper.APIResponse("failed to uploud avatar image ", http.StatusBadRequest, "error", data)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	path := "images/" + file.Filename
+
+	err = c.SaveUploadedFile(file, path)
+
+	if err != nil {
+		data := gin.H{"is_uplouded": false}
+		response := helper.APIResponse("failed to uploud avatar image ", http.StatusBadRequest, "error", data)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	userID := 1
+
+	_, err = h.userService.SaveAvatar(userID, path)
+
+	if err != nil {
+		data := gin.H{"is_uplouded": false}
+		response := helper.APIResponse("failed to uploud avatar image ", http.StatusBadRequest, "error", data)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	data := gin.H{"is_uplouded": true}
+	response := helper.APIResponse("Success uploud avatar ", http.StatusOK, "success", data)
+
 	c.JSON(http.StatusOK, response)
 
 }

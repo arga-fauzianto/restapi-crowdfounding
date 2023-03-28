@@ -2,8 +2,8 @@ package main
 
 import (
 	"log"
-	"rest-croudfounding/handler"
-	"rest-croudfounding/user"
+	"rest-crowdfounding/handler"
+	"rest-crowdfounding/user"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -19,7 +19,10 @@ func main() {
 	}
 
 	userRepository := user.NewRepository(db)
+
 	userService := user.NewService(userRepository)
+
+	userService.SaveAvatar(2, "images/profile.png")
 
 	userHandler := handler.NewUserHandler(userService)
 
@@ -28,6 +31,7 @@ func main() {
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailable)
+	api.POST("/avatars", userHandler.UploudAvatar)
 
 	router.Run()
 
