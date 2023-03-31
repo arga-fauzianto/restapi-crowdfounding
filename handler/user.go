@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"rest-crowdfounding/helper"
 	"rest-crowdfounding/user"
@@ -79,9 +80,6 @@ func (h *userHandler) Login(c *gin.Context) {
 }
 
 func (h *userHandler) CheckEmailAvailable(c *gin.Context) {
-	// add input email dari user
-	// input email mapping ke struct input
-	// struct input mapping ke service
 
 	var input user.CheckEmailInput
 
@@ -133,7 +131,9 @@ func (h *userHandler) UploudAvatar(c *gin.Context) {
 		return
 	}
 
-	path := "images/" + file.Filename
+	userID := 11
+
+	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
 
 	err = c.SaveUploadedFile(file, path)
 
@@ -144,8 +144,6 @@ func (h *userHandler) UploudAvatar(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-
-	userID := 1
 
 	_, err = h.userService.SaveAvatar(userID, path)
 

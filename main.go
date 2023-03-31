@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"rest-crowdfounding/auth"
 	"rest-crowdfounding/handler"
 	"rest-crowdfounding/user"
 
@@ -22,15 +24,21 @@ func main() {
 
 	userService := user.NewService(userRepository)
 
-	userService.SaveAvatar(2, "images/profile.png")
+	authService := auth.NewService()
+
+	fmt.Println(authService.GenerateToken(1001))
 
 	userHandler := handler.NewUserHandler(userService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
+
 	api.POST("/users", userHandler.RegisterUser)
+
 	api.POST("/sessions", userHandler.Login)
+
 	api.POST("/email_checkers", userHandler.CheckEmailAvailable)
+
 	api.POST("/avatars", userHandler.UploudAvatar)
 
 	router.Run()
