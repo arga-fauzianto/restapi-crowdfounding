@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"rest-crowdfounding/auth"
 	"rest-crowdfounding/helper"
 	"rest-crowdfounding/user"
 
@@ -11,10 +12,11 @@ import (
 
 type userHandler struct {
 	userService user.Service
+	authService auth.Service
 }
 
-func NewUserHandler(userService user.Service) *userHandler {
-	return &userHandler{userService}
+func NewUserHandler(userService user.Service, authService auth.Service) *userHandler {
+	return &userHandler{userService, authService}
 }
 
 func (h *userHandler) RegisterUser(c *gin.Context) {
@@ -37,7 +39,13 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 	}
 
-	formatter := user.FormatUser(newUser, "tokentokentoken")
+	token, err := h.authService.GenerateToken(newUser.ID)
+	if err != nil {
+		response := helper.APIResponse("Accoun register failed", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+	}
+
+	formatter := user.FormatUser(newUser, token)
 
 	response := helper.APIResponse("Accoun register", http.StatusOK, "success", formatter)
 
@@ -71,7 +79,13 @@ func (h *userHandler) Login(c *gin.Context) {
 
 	}
 
-	formatter := user.FormatUser(loginUser, "tokentokentoken")
+	token, err := h.authService.GenerateToken(loginUser.ID)
+	if err != nil {
+		response := helper.APIResponse("Login failed", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+	}
+
+	formatter := user.FormatUser(loginUser, token)
 
 	response := helper.APIResponse("Login succesfull", http.StatusOK, "success", formatter)
 
@@ -131,7 +145,7 @@ func (h *userHandler) UploudAvatar(c *gin.Context) {
 		return
 	}
 
-	userID := 11
+	userID := 14
 
 	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
 
