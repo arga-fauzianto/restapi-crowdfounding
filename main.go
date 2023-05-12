@@ -63,7 +63,7 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 		arrayOfToken := strings.Split(authHeader, " ")
 
 		if len(tokenString) == 2 {
-			tokenSTring = arrayOfToken[1]
+			tokenString = arrayOfToken[1]
 		}
 
 		token, err := authService.ValidateToken(tokenString)
