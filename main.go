@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"rest-crowdfounding/auth"
@@ -30,27 +29,15 @@ func main() {
 	campaignRepository := campaign.NewRepository(db)
 
 	// campaigns, err := campaignRepository.FindAll()
-	campaigns, err := campaignRepository.FindByUserID(1)
-
-	fmt.Println("debug")
-	fmt.Println("debug")
-	fmt.Println("debug")
-
-	fmt.Println(len(campaigns))
-
-	for _, campaign := range campaigns {
-		fmt.Println(campaign.Name)
-
-		if len(campaign.CampaignImages) > 0 {
-			fmt.Println(campaign.CampaignImages[0].FileName)
-		}
-	}
 
 	userService := user.NewService(userRepository)
+	campaignService := campaign.NewRepository(campaignRepository)
 
 	authService := auth.NewService()
 
 	userHandler := handler.NewUserHandler(userService, authService)
+
+	campaignHandler := handler.NewcampaignHandler(campaignService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
@@ -62,6 +49,8 @@ func main() {
 	api.POST("/email_checkers", userHandler.CheckEmailAvailable)
 
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploudAvatar)
+
+	api.GET("/campaigns", campaignHandler.GetCampaigns)
 
 	router.Run()
 
