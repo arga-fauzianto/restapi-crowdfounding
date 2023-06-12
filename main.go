@@ -28,16 +28,14 @@ func main() {
 
 	campaignRepository := campaign.NewRepository(db)
 
-	// campaigns, err := campaignRepository.FindAll()
+	campaignService := campaign.NewRepository(campaignRepository)
+	campaignHandler := handler.NewCampaignHandler(campaignService)
 
 	userService := user.NewService(userRepository)
-	campaignService := campaign.NewRepository(campaignRepository)
 
 	authService := auth.NewService()
 
 	userHandler := handler.NewUserHandler(userService, authService)
-
-	campaignHandler := handler.NewcampaignHandler(campaignService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
